@@ -200,18 +200,35 @@ export default {
     storage.push(contract);
   },
 
+  [IncomeMessageType.COMMISSION_REPORT]: function (fields) {
+    const f = (e) => e;
+
+    const map = {
+      2: ["execId", f],
+      3: ["commission", parseFloat],
+      5: ["pnl", parseFloat],
+      6: ["checksum", parseFloat],
+    };
+    const result = {};
+    _.map(map, (array, index) => (result[_.first(array)] = _.last(array)(fields[index])));
+    if (result.pnl === result.checksum) result.pnl = undefined;
+    delete result.checksum;
+    this.requestIdEmit(result.execId, "commision_report", result);
+  },
   // HandleInfo(proc=processExecutionDataMsg),
   [IncomeMessageType.EXECUTION_DATA]: function (fields) {
     const orderId = parseInt(_.nth(fields, 2));
+    const f = (e) => e;
     const map = {
-      3: ["conId", (e) => e],
-      18: ["action", (e) => e],
-      15: ["timestamp", (e) => e],
+      3: ["conId", f],
+      18: ["action", f],
+      15: ["timestamp", f],
       24: ["quantity", parseInt],
       25: ["fillPrice", parseFloat],
-      12: ["symbol", (e) => e],
+      12: ["symbol", f],
+      14: ["execId", f],
     };
-    const result = {};
+    const result = { orderId };
     _.map(map, (array, index) => (result[_.first(array)] = _.last(array)(fields[index])));
     this.requestIdEmit(orderId, "execution_data", result);
   },
@@ -381,7 +398,6 @@ export default {
   [IncomeMessageType.MARKET_DATA_TYPE]: handler_MARKET_DATA_TYPE,
 
   // HandleInfo(proc=processCommissionReportMsg),
-  [IncomeMessageType.COMMISSION_REPORT]: todo("COMMISSION_REPORT"),
 
   [IncomeMessageType.POSITION_DATA]: function (fields) {
     fields.shift();

@@ -532,7 +532,7 @@ class Client {
   ########################################################################
   */
 
-  async placeOrder(p, execute_listener) {
+  async placeOrder(p, execute_listener = console.log, commision_listener = console.log, onError = console.log) {
     /*
     place an order. The order status will
     be returned by the orderStatus event.
@@ -541,16 +541,22 @@ class Client {
         contract which is being traded.
     order:Order - This structure contains the details of tradedhe order.
         Note: Each client MUST connect with a unique clientId.*/
-    console.log(typeof execute_listener);
     assert(!p.orderId);
 
     p.orderId = await this._allocateRequestId();
     p.order.clientId = this._clientId;
 
+    console.log("Order id:" + p.orderId);
+
     await this._sendFieldsetRateLimited(request_placeOrder(this._serverVersion, p));
 
     const listener = this._incomeHandler.requestIdEmitter(p.orderId, () => {});
-    listener.on("execution_data", execute_listener);
+    listener.on("execution_data", (e) => {
+      const com_list = this._incomeHandler.requestIdEmitter(e.execId, () => {});
+      com_list.on("commision_report", commision_listener);
+      execute_listener(e);
+    });
+    listener.on("error", onError);
 
     return p.orderId;
   }

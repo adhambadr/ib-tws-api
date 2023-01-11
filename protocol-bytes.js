@@ -135,7 +135,6 @@ class ProtocolBytes {
   _onData(data) {
     debuglog("received packet");
     debuglog(data);
-    debuglog(data.toString("ascii"));
 
     if (this._dataPending) {
       this._dataPending = Buffer.concat([this._dataPending, data]);
