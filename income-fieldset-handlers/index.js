@@ -448,9 +448,15 @@ export default {
   },
 
   // HandleInfo(wrap=EWrapper.accountSummary),
-  [IncomeMessageType.ACCOUNT_SUMMARY]: todo("ACCOUNT_SUMMARY"),
+  [IncomeMessageType.ACCOUNT_SUMMARY]: function (fields) {
+    const requestId = parseInt(_.nth(fields, 2));
+    this.requestIdStorageMap(requestId)[_.nth(fields, 4)] = _.nth(fields, 5);
+  },
   // HandleInfo(wrap=EWrapper.accountSummaryEnd),
-  [IncomeMessageType.ACCOUNT_SUMMARY_END]: todo("ACCOUNT_SUMMARY_END"),
+  [IncomeMessageType.ACCOUNT_SUMMARY_END]: function (fields) {
+    const requestId = parseInt(_.nth(fields, 2));
+    this.requestIdResolve(requestId, this.requestIdStorageMap(requestId));
+  },
   // HandleInfo(wrap=EWrapper.verifyMessageAPI),
   [IncomeMessageType.VERIFY_MESSAGE_API]: todo("VERIFY_MESSAGE_API"),
   // HandleInfo(wrap=EWrapper.verifyCompleted),

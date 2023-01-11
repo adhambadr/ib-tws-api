@@ -644,7 +644,6 @@ class Client {
   }
 
   async reqAccountSummary(/*self, requestId:int, groupName:str, tags:str*/) {
-    throw new Error("not implemented yet");
     /*
     """Call this method to request and keep up to date the data that appears
     on the TWS Account Window Summary tab. The data is returned by
@@ -702,16 +701,19 @@ class Client {
 
 
 
-    const VERSION = 1;
 
-    msg = flds.push(OutcomeMessageType.REQ_ACCOUNT_SUMMARY) \
-       + flds.push(VERSION)   \
-       + flds.push(requestId)     \
-       + flds.push(groupName) \
-       + flds.push(tags)
-
-    this._sendFieldsetRateLimited(msg)
     */
+    let requestId = await this._allocateRequestId();
+    const VERSION = 1;
+    let flds = [];
+    flds.push(OutcomeMessageType.REQ_ACCOUNT_SUMMARY);
+    flds.push(VERSION);
+    flds.push(requestId);
+    flds.push("All");
+    flds.push("$LEDGER");
+
+    await this._sendFieldsetExpirable(flds);
+    return await this._incomeHandler.awaitRequestId(requestId);
   }
 
   async cancelAccountSummary(/*self, requestId:int*/) {
