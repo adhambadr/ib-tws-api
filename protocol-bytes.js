@@ -60,6 +60,7 @@ class ProtocolBytes {
 
   disconnect() {
     this._socket.end();
+    this._socket.destroy();
   }
 
   sendFieldset(fields) {
@@ -94,9 +95,9 @@ class ProtocolBytes {
     this._socket.write(message);
   }
 
-  sendHandshake() {
+  sendHandshake(forcedVersion) {
     const MIN_CLIENT_VERSION = 100;
-    const MAX_CLIENT_VERSION = 151;
+    const MAX_CLIENT_VERSION = forcedVersion || 151;
 
     let v100prefix = "API\0";
     this._socket.write(v100prefix);

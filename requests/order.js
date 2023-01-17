@@ -3,7 +3,6 @@ import OutcomeMessageType from "../const-outcome-message-type.js";
 import ServerVersion from "../const-server-version.js";
 
 export function request_placeOrder(serverVersion, p) {
-  serverVersion = 151;
   /*
   p: orderId:OrderId, contract:Contract, order:Order
 
@@ -89,23 +88,13 @@ export function request_placeOrder(serverVersion, p) {
   }
 
   if (serverVersion < ServerVersion.MIN_SERVER_VER_DELTA_NEUTRAL_CONID) {
-    if (
-      order.deltaNeutralConId > 0 ||
-      order.deltaNeutralSettlingFirm ||
-      order.deltaNeutralClearingAccount ||
-      order.deltaNeutralClearingIntent
-    ) {
+    if (order.deltaNeutralConId > 0 || order.deltaNeutralSettlingFirm || order.deltaNeutralClearingAccount || order.deltaNeutralClearingIntent) {
       throw new Error("It does not support deltaNeutral parameters: ConId, SettlingFirm, ClearingAccount, ClearingIntent.");
     }
   }
 
   if (serverVersion < ServerVersion.MIN_SERVER_VER_DELTA_NEUTRAL_OPEN_CLOSE) {
-    if (
-      order.deltaNeutralOpenClose ||
-      order.deltaNeutralShortSale ||
-      order.deltaNeutralShortSaleSlot > 0 ||
-      order.deltaNeutralDesignatedLocation
-    ) {
+    if (order.deltaNeutralOpenClose || order.deltaNeutralShortSale || order.deltaNeutralShortSaleSlot > 0 || order.deltaNeutralDesignatedLocation) {
       throw new Error("It does not support deltaNeutral parameters: OpenClose, ShortSale, ShortSaleSlot, DesignatedLocation.");
     }
   }
@@ -121,10 +110,7 @@ export function request_placeOrder(serverVersion, p) {
         order.scaleInitFillQty != null ||
         order.scaleRandomPercent
       ) {
-        throw new Error(
-          "It does not support Scale order parameters: PriceAdjustValue, PriceAdjustInterval, " +
-            "ProfitOffset, AutoReset, InitPosition, InitFillQty and RandomPercent"
-        );
+        throw new Error("It does not support Scale order parameters: PriceAdjustValue, PriceAdjustInterval, " + "ProfitOffset, AutoReset, InitPosition, InitFillQty and RandomPercent");
       }
     }
   }
@@ -193,17 +179,11 @@ export function request_placeOrder(serverVersion, p) {
     }
   }
 
-  if (
-    serverVersion < ServerVersion.MIN_SERVER_VER_DECISION_MAKER &&
-    (order.mifid2DecisionMaker != "" || order.mifid2DecisionAlgo != "")
-  ) {
+  if (serverVersion < ServerVersion.MIN_SERVER_VER_DECISION_MAKER && (order.mifid2DecisionMaker != "" || order.mifid2DecisionAlgo != "")) {
     throw new Error("It does not support MIFID II decision maker parameters");
   }
 
-  if (
-    serverVersion < ServerVersion.MIN_SERVER_VER_MIFID_EXECUTION &&
-    (order.mifid2ExecutionTrade != "" || order.mifid2ExecutionAlgo != "")
-  ) {
+  if (serverVersion < ServerVersion.MIN_SERVER_VER_MIFID_EXECUTION && (order.mifid2ExecutionTrade != "" || order.mifid2ExecutionAlgo != "")) {
     throw new Error("It does not support MIFID II execution parameters");
   }
 
@@ -440,11 +420,7 @@ export function request_placeOrder(serverVersion, p) {
 
   flds.push(order.scalePriceIncrement);
 
-  if (
-    serverVersion >= ServerVersion.MIN_SERVER_VER_SCALE_ORDERS3 &&
-    order.scalePriceIncrement != null &&
-    order.scalePriceIncrement > 0
-  ) {
+  if (serverVersion >= ServerVersion.MIN_SERVER_VER_SCALE_ORDERS3 && order.scalePriceIncrement != null && order.scalePriceIncrement > 0) {
     flds.push(order.scalePriceAdjustValue);
     flds.push(order.scalePriceAdjustInterval);
     flds.push(order.scaleProfitOffset);

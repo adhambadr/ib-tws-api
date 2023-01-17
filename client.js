@@ -22,6 +22,10 @@ class Client {
     }
   */
   constructor(connectionParameters = {}) {
+    this.reset(connectionParameters);
+  }
+
+  reset(connectionParameters) {
     this._connectionParameters = connectionParameters;
     this._emitter = new EventEmitter();
     this._emitter.on("error", (e) => {
@@ -34,6 +38,15 @@ class Client {
     // marketDataType is connection's mode of operation
     // should be restored on reconnection if specified by reqMarketDataType
     this._marketDataType = null;
+  }
+
+  async reconnect(forcedVersion) {
+    this.reset({
+      ...this._connectionParameters,
+      forcedVersion,
+    });
+    this._protocolBytes.disconnect();
+    //   return this._connect();
   }
 
   async connect(p) {
@@ -102,7 +115,7 @@ class Client {
       clientId: this._clientId,
     });
 
-    this._protocolBytes.sendHandshake();
+    this._protocolBytes.sendHandshake(this._connectionParameters.forcedVersion);
 
     // attach messages handler
     this._incomeHandler = new IncomeFieldsetHandler({
