@@ -115,10 +115,7 @@ class Client {
     this._incomeHandler.setServerVersion(serverVersion);
 
     this._connectSendStartApi();
-    let [nextValidId, accounts] = await Promise.all([
-      this._incomeHandler.awaitMessageType(IncomeMessageType.NEXT_VALID_ID),
-      this._incomeHandler.awaitMessageType(IncomeMessageType.MANAGED_ACCTS),
-    ]);
+    let [nextValidId, accounts] = await Promise.all([this._incomeHandler.awaitMessageType(IncomeMessageType.NEXT_VALID_ID), this._incomeHandler.awaitMessageType(IncomeMessageType.MANAGED_ACCTS)]);
 
     this._nextValidId = nextValidId;
 
@@ -545,8 +542,6 @@ class Client {
 
     p.orderId = await this._allocateRequestId();
     p.order.clientId = this._clientId;
-
-    console.log("Order id:" + p.orderId);
 
     await this._sendFieldsetRateLimited(request_placeOrder(this._serverVersion, p));
 
@@ -2090,14 +2085,7 @@ class Client {
       throw new Error("It does not support security definition option request.");
     }
 
-    await this._sendFieldsetExpirable([
-      OutcomeMessageType.REQ_SEC_DEF_OPT_PARAMS,
-      requestId,
-      underlyingSymbol,
-      futFopExchange,
-      underlyingSecType,
-      underlyingConId,
-    ]);
+    await this._sendFieldsetExpirable([OutcomeMessageType.REQ_SEC_DEF_OPT_PARAMS, requestId, underlyingSymbol, futFopExchange, underlyingSecType, underlyingConId]);
 
     let result = await this._incomeHandler.awaitRequestId(requestId);
     if (!p.exchange) {
