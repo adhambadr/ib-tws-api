@@ -223,7 +223,7 @@ export default {
       3: ["conId", f],
       18: ["action", f],
       15: ["timestamp", f],
-      24: ["quantity", parseInt],
+      24: ["amount", parseInt],
       25: ["fillPrice", parseFloat],
       12: ["symbol", f],
       14: ["execId", f],
@@ -657,10 +657,7 @@ export default {
   [IncomeMessageType.COMPLETED_ORDER]: handler_COMPLETED_ORDER,
 
   [IncomeMessageType.COMPLETED_ORDERS_END]: function (fields) {
-    this.messageTypeResolve(
-      IncomeMessageType.COMPLETED_ORDERS_END,
-      this.messageTypeStorageArray(IncomeMessageType.COMPLETED_ORDERS_END)
-    );
+    this.messageTypeResolve(IncomeMessageType.COMPLETED_ORDERS_END, this.messageTypeStorageArray(IncomeMessageType.COMPLETED_ORDERS_END));
   },
 
   [IncomeMessageType._SERVER_VERSION]: function (fields) {
