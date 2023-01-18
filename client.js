@@ -551,9 +551,8 @@ class Client {
         contract which is being traded.
     order:Order - This structure contains the details of tradedhe order.
         Note: Each client MUST connect with a unique clientId.*/
-    assert(!p.orderId);
 
-    p.orderId = await this._allocateRequestId();
+    if (!p.orderId) p.orderId = await this._allocateRequestId();
     p.order.clientId = this._clientId;
 
     await this._sendFieldsetRateLimited(request_placeOrder(this._serverVersion, p));
